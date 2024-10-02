@@ -19,7 +19,6 @@ async function new_collection(name) {
   collection = database.createCollection(name)
   console.log('collection created' + 'name' + name)
   client.close
-  
 }
 
 //add one document to collection
@@ -28,13 +27,21 @@ async function add_doc(item_jason,collection_name) {
   console.log('start adding document')
   database.collection(collection_name).insertOne(item_jason)
   console.log('finish adding document')
+  client.close
 }
 
 //delete user
-async function delete_user(username,collection_name) {
+async function delete_user(user_name,collection_name) {
   connectToMongoDB()
-  database.collection(collection_name).findOneAndDelete({username : username} )
+  database.collection(collection_name).findOneAndDelete({username : user_name} )
+  client.close
 }
 
+//update password
+async function update_password(user_name, new_password,collection_name) {
+  connectToMongoDB()
+  database.collection(collection_name).findOneAndUpdate({username : user_name}, {$set:{password : new_password}})
+  client.close
+}
 
 
