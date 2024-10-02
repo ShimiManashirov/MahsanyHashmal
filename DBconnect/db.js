@@ -17,10 +17,25 @@ async function connectToMongoDB() {
 async function new_collection(name) {
   connectToMongoDB()
   console.log('start creating collection')
-  const collection = database.createCollection(name)
+  collection = database.createCollection(name)
   console.log('collection created' + 'name' + name)
   client.close
   
 }
 
-new_collection("test")
+//add one document to collection
+async function add_doc(item_jason,collection_name) {
+  item_jason
+  connectToMongoDB()
+  console.log('start adding document')
+  database.collection(collection_name).insertOne(item_jason)
+  console.log('finish adding document')
+}
+
+const new_item={
+  name : "shimi",
+  password : "1234"
+}
+
+
+add_doc(new_item,'test')
