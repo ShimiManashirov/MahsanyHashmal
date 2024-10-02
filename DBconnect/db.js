@@ -1,18 +1,26 @@
-// Requiring module
 const express = require('express');
+const { MongoClient } = require('mongodb');
+require('dotenv').config();
 
-// Creating express object
 const app = express();
+const port = process.env.PORT || 3000;
 
-// Handling GET request
-app.get('/', (req, res) => { 
-    res.send('A simple Node App is '
-        + 'running on this server') 
-    res.end() 
-}) 
+const client = new MongoClient('mongodb+srv://shimitamiroz:shimitamiroz@shopdb.hqf0u.mongodb.net/');
+const database = client.db('ShopDB');
 
-// Port Number
-const PORT = process.env.PORT ||5000;
+//connect to DB
+async function connectToMongoDB() {
+  await client.connect();
+    console.log("Connected successfully to MongoDB");
+}
+//creating a new collection
+async function new_collection(name) {
+  connectToMongoDB()
+  console.log('start creating collection')
+  const collection = database.createCollection(name)
+  console.log('collection created' + 'name' + name)
+  client.close
+  
+}
 
-// Server Setup
-app.listen(PORT,console.log(`Server started on port ${PORT}`));
+new_collection("test")
