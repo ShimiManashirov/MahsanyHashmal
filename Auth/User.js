@@ -22,7 +22,14 @@ class User{
         user_token = this.encrtyptor(username,password);
         user_json_data = {'username':username,'hash':user_token,'display_name':display_name,'email':email,'first_name':first_name,
             'last_name':last_name,'birth_date':birthDate};
-        DB.add_doc(item_json: user_json_data, collection_name: 'users')
+        try{
+            DB.add_doc(item_json=user_json_data, collection_name='users')
+            return {'status_error_code':200,'message':'User creation succeded'}
+        }
+        catch(error){
+            return {'status_error_code':404,'message':'User creation failed'}
+        }
+        
     }
 
     User_check_if_exist(username){

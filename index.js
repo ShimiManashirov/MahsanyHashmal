@@ -2,9 +2,12 @@
 import express from 'express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import userRoutes from './routes/userRoutes.js';
+import router from './routes/userRoutes.js';
+import bodyParser from 'body-parser';
 
 const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended : true}))
 const port = 3000;
 
 // Swagger definition
@@ -12,9 +15,9 @@ const swaggerOptions = {
     swaggerDefinition: {
         openapi: '3.0.0',
         info: {
-            title: 'Express API',
+            title: 'Ozile Made KupaRashit Electric!',
             version: '1.0.0',
-            description: 'API documentation for an Express app',
+            description: 'Hi everyone!',
         },
         servers: [
             {
@@ -25,11 +28,12 @@ const swaggerOptions = {
     apis: ['./routes/*.js'],
 };
 
+
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Include the user routes
-app.use('/', userRoutes);
+app.use('/', router);
 
 // Setup function
 async function setup() {
@@ -48,4 +52,6 @@ export async function startServer() {
 }
 
 // Execute the function to start the server
-startServer();
+
+
+startServer()

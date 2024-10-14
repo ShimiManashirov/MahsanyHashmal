@@ -47,7 +47,8 @@ class DB {
         return null;
       }
       return document.hash;
-    }catch(error){
+    }
+    catch(error){
       console.error('Failed to find document', error);
       throw error;
     }
