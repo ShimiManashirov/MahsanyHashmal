@@ -1,40 +1,43 @@
 //require('dotenv').config();
 import crypto from 'crypto';
 import DB from '../DBconnect/DB.js'
+import { Collection } from 'mongodb';
 
 
 class User{
     constructor(config){
         this.encryption_method = config.AUTHENTICATOR.ENCRYPTION_METHOD;
-        this.hash = crypto.createHash(this.encryption_method);
         this.DB = new DB();
     }
 
     encrtyptor(username,password){
-        const data_to_generate = `${username}+${password}`;
-        this.hash.update(data_to_generate);
-        const user_token = this.hash.digest('hex');
+        var hash = crypto.createHash(this.encryption_method);
+        var data_to_generate = `${username}+${password}`;
+        hash.update(data_to_generate);
+        var user_token = hash.digest('hex');
         console.log(`your TOKEN is ready and it is: ${user_token}`);
         return user_token;
     }
 
-    User_creator(username,password,display_name,email,first_name,last_name,birthDate){
-        user_token = this.encrtyptor(username,password);
-        user_json_data = {'username':username,'hash':user_token,'display_name':display_name,'email':email,'first_name':first_name,
+    User_creator(username,password,email,first_name,last_name,birthDate){
+        var user_token = this.encrtyptor(username,password);
+        var user_json_data = {'username':username,'hash':user_token,'email':email,'first_name':first_name,
             'last_name':last_name,'birth_date':birthDate};
+        console.log(user_json_data);
         try{
-            DB.add_doc(item_json=user_json_data, collection_name='users')
-            return {'status_error_code':200,'message':'User creation succeded'}
+            this.DB.add_doc(user_json_data, 'users');
+            return {'status_code':200,'message':'User creation succeded'};
         }
         catch(error){
-            return {'status_error_code':404,'message':'User creation failed'}
+            console.log(error);
+            return {'status_code':404,'message':'User creation failed'};
         }
         
     }
 
     User_check_if_exist(username){
         try{
-            if (DB.get_user_doc(username) == null){
+            if (this.DB.get_user_doc(username) == null){
                 console.log('i will think about it user not found');
             }
             
@@ -53,11 +56,17 @@ class User{
         
     }
 
-    User_check_auth(username,password){
+    async User_check_auth(username,password){
         try{
-            user_token = this.encrtyptor(username,password);
-            DB.get_hash_from_user(username,'users')
-            console.log("Success!")}
+            let user_token = this.encrtyptor(username,password);
+            if (user_token == await this.DB.get_hash_from_user(username,'users')){
+                console.log(`logging succeded with username ${username}`);
+                return true;
+            }
+            else{
+                console.log(`logging failed with username ${username}`);
+                return false;
+            }}
         catch(error){
             console.error('Failed to find user hash', error);
             throw error;

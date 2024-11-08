@@ -30,8 +30,8 @@ class DB {
   async add_doc(item_json, collection_name) {
     console.log('Start adding document');
     try {
-      const collection = this.database.collection(collection_name);
-      const result = await collection.insertOne(item_json);
+      let collection = this.database.collection(collection_name);
+      let result = await collection.insertOne(item_json);
       console.log('Finished adding document', result.insertedId);
       return result;
     } catch (error) {
@@ -41,7 +41,7 @@ class DB {
   }
   async get_hash_from_user(user_name, collection_name){
     try{
-      const document = await this.database.collection(collection_name).findOne({username : user_name})
+      let document = await this.database.collection(collection_name).findOne({username : user_name});
       if (!document) {
         console.log(`User ${user_name} not found`);
         return null;
@@ -56,7 +56,7 @@ class DB {
 
   async get_user_doc(user_name, collection_name){
     try{
-      const document = await this.database.collection(collection_name).findOne({username : user_name})
+      let document = await this.database.collection(collection_name).findOne({username : user_name})
       if (!document) {
         console.log(`User ${user_name} not found`);
         return null;
@@ -68,6 +68,31 @@ class DB {
     }
   }
 
+  async get_doc(json_data, collection_name){
+    try{
+      let documents = await this.database.collection(collection_name).find(json_data, { projection: { _id: 0 } }).toArray();
+      console.log(documents);
+      if (!documents) {
+        console.log(`the desire doc is not found`);
+        return null;
+      }
+      return documents;
+    }catch(error){
+      console.error('Failed to find document', error);
+      throw error;
+    }
+  }
+
+  async update_doc(json_data,collection_name){
+    try{
+      await this.database.collection(collection_name).updateOne(...json_data);
+      console.log(`Updated the ${collection_name} with parametrs ${json_data}`);
+    }
+    catch(error){
+    console.error('Failed to update document', error);
+    throw error;
+  }
+}
   
   close() {
     this.client.close();

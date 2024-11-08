@@ -3,23 +3,24 @@ import { user_obj } from '../main.js';
 
 const router = express.Router();
 
+
 /**
  * @swagger
- * /users:
+ * /user:
  *   get:
  *     description: Get all users
  *     responses:
  *       200:
  *         description: A list of users
  */
-router.get('/users', (req, res) => {
+router.get('/user', (req, res) => {
    return res.json([{ id: 1, name: 'User 1' }, { id: 2, name: 'User 2' }]);
 });
 
 
 /**
  * @swagger
- * /users/{id}:
+ * /user/{id}:
  *   get:
  *     description: Get a user by ID
  *     parameters:
@@ -32,45 +33,120 @@ router.get('/users', (req, res) => {
  *         description: A user object
  */
 
-router.get('/users/:id', (req, res) => {
+router.get('/user/:id', (req, res) => {
     const userId = req.params.id;
     res.json({ id: userId, name: `User ${userId}` });
 });
 
+
 /**
  * @swagger
- * /user/create:
+ * /user/login:
  *   post:
- *     description: Create a user
+ *     description: Log in a user
  *     consumes:
  *       - application/json
  *     parameters:
- *       - name: user
+ *       - name: body
  *         in: body
+ *         required: true
  *         schema:
  *           type: object 
  *           properties:
  *             username:
  *               type: string
- *             lol:
+ *             password:
  *               type: string
  *     responses:
  *       200:
- *         description: A user object
+ *         description: A successful login with user object
+ *         schema:
+ *           type: object
+ *           properties:
+ *             tamir:
+ *               type: string
+ *               example: "tamiros!"
  */
 
-router.post('/user/create', (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    const email = req.body.emaill;
-    const first_name = req.body.first_name;
-    //const display_name = req.body.display_name;
-    const last_name = req.body.last_name;
-    const birthDate = req.body.birthDate;
-    //req.log('Initalizing user creator!');
-    console.log(req.body);
 
-    return res.json(user_obj.User_creator(username=username,password=password,email=email,first_name=first_name,display_name=display_name,
+router.post('/user/login', (req, res) => {
+    let username = req.body.Username;
+    let password = req.body.Password;
+    if (user_obj.User_check_auth(username=username,password=password)){
+        return res.status(200).json({ Username: username });
+    }
+    else{
+        return res.status(403).json({ Username: username });
+    }
+});
+
+
+
+/**
+ * @swagger
+ * /user/create:
+ *   post:
+ *     summary: Create a new user
+ *     description: This endpoint allows you to create a new user by providing the necessary information.
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - name: user
+ *         in: body
+ *         required: true
+ *         description: User object that contains user information.
+ *         schema:
+ *           type: object
+ *           properties:
+ *             username:
+ *               type: string
+ *               example: exampleUser
+ *               description: Unique username for the user.
+ *             password:
+ *               type: string
+ *               example: Password123!
+ *               description: Password for the user account (should be stored securely).
+ *             email:
+ *               type: string
+ *               example: user@example.com
+ *               description: User's email address.
+ *             first_name:
+ *               type: string
+ *               example: John
+ *               description: User's first name.
+ *             last_name:
+ *               type: string
+ *               example: Doe
+ *               description: User's last name.
+ *             birthDate:
+ *               type: string
+ *               format: date
+ *               example: 1990-01-01
+ *               description: User's date of birth (in YYYY-MM-DD format).
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         schema:
+ *           $ref: '#/definitions/User'  # Reference to a User definition if available
+ *       400:
+ *         description: Invalid input, missing required fields
+ *       500:
+ *         description: Internal server error
+ */
+
+
+router.post('/user/create', (req, res) => {
+    console.log(req.body);
+    var username = req.body.Username;
+    var password = req.body.Password;
+    var email = req.body.email;
+    var first_name = req.body.firstName;
+    var last_name = req.body.lastName;
+    var birthDate = req.body.birthDate;
+    //req.log('Initalizing user creator!');
+    console.log(req.body.username);
+
+    return res.json(user_obj.User_creator(username=username,password=password,email=email,first_name=first_name,
         last_name=last_name,birthDate=birthDate)
     );
 })
