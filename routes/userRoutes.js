@@ -1,42 +1,12 @@
 import express from 'express';
 import { user_obj } from '../main.js';
+import Cart from '../Products/Cart.js'
+import configuration from '../config_reader.js';
+
 
 const router = express.Router();
 
 
-/**
- * @swagger
- * /user:
- *   get:
- *     description: Get all users
- *     responses:
- *       200:
- *         description: A list of users
- */
-router.get('/user', (req, res) => {
-   return res.json([{ id: 1, name: 'User 1' }, { id: 2, name: 'User 2' }]);
-});
-
-
-/**
- * @swagger
- * /user/{id}:
- *   get:
- *     description: Get a user by ID
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: Numeric ID of the user to get
- *     responses:
- *       200:
- *         description: A user object
- */
-
-router.get('/user/:id', (req, res) => {
-    const userId = req.params.id;
-    res.json({ id: userId, name: `User ${userId}` });
-});
 
 
 /**
@@ -69,11 +39,15 @@ router.get('/user/:id', (req, res) => {
  */
 
 
-router.post('/user/login', (req, res) => {
+router.post('/user/login', async (req, res) => {
     let username = req.body.Username;
     let password = req.body.Password;
-    if (user_obj.User_check_auth(username=username,password=password)){
-        return res.status(200).json({ Username: username });
+    var user_auth =await user_obj.User_check_auth(username=username,password=password)
+    if (user_auth['valid']){
+        console.log("got here")
+        var user_cart = new Cart(configuration.config_product,user_auth['hash'],user_obj.DB);
+        user_obj.users_online[user_auth['hash']] = user_cart;
+        return res.status(200).json({ Username: username,User_hash:user_auth['hash']});
     }
     else{
         return res.status(403).json({ Username: username });

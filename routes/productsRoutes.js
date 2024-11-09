@@ -1,6 +1,4 @@
 import express from 'express';
-
-
 import { product_obj } from '../main.js';
 
 
@@ -57,12 +55,6 @@ product_router.post('/product/retrive',async (req, res) => {
         return res.status(404).json({"message":"Tamir you"})
     }
 })
-
-
-
-
-
-
 
 
 

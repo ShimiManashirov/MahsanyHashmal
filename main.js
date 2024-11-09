@@ -9,6 +9,7 @@ console.log("--- Starting of Backend ----")
 console.log("Initilazing DB class");
 export const DB_obj = new DB();
 console.log("Initilazing autenticator class");
-export const user_obj = new User(configuration.config_user);
+export const user_obj = new User(configuration.config_user,DB_obj);
 console.log("Initilazing product class");
 export const product_obj = new Product(configuration.config_product,DB_obj);
+console.log("Initilazing cart class");

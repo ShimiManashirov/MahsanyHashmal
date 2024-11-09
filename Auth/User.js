@@ -5,9 +5,10 @@ import { Collection } from 'mongodb';
 
 
 class User{
-    constructor(config){
+    constructor(config,DB){
         this.encryption_method = config.AUTHENTICATOR.ENCRYPTION_METHOD;
-        this.DB = new DB();
+        this.DB = DB;
+        this.users_online = {};
     }
 
     encrtyptor(username,password){
@@ -60,8 +61,10 @@ class User{
         try{
             let user_token = this.encrtyptor(username,password);
             if (user_token == await this.DB.get_hash_from_user(username,'users')){
+                var json_data_user = {'hash':user_token}
+                var user_doc = await this.DB.get_doc(json_data_user,'users');
                 console.log(`logging succeded with username ${username}`);
-                return true;
+                return {valid:true,hash:user_token,role:user_doc['role']};
             }
             else{
                 console.log(`logging failed with username ${username}`);
