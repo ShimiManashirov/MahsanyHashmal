@@ -47,7 +47,8 @@ router.post('/user/login', async (req, res) => {
         console.log("got here")
         var user_cart = new Cart(configuration.config_product,user_auth['hash'],user_obj.DB);
         user_obj.users_online[user_auth['hash']] = user_cart;
-        return res.status(200).json({ Username: username,User_hash:user_auth['hash']});
+        console.log(user_auth);
+        return res.status(200).json({ Username: username,User_hash:user_auth['hash'],User_role:user_auth['role']});
     }
     else{
         return res.status(403).json({ Username: username });
@@ -121,6 +122,69 @@ router.post('/user/create', (req, res) => {
     console.log(req.body.username);
 
     return res.json(user_obj.User_creator(username=username,password=password,email=email,first_name=first_name,
+        last_name=last_name,birthDate=birthDate)
+    );
+})
+
+
+
+
+
+/**
+ * @swagger
+ * /user/update:
+ *   post:
+ *     summary: Create a new user
+ *     description: This endpoint allows you to create a new user by providing the necessary information.
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - name: user
+ *         in: body
+ *         required: true
+ *         description: User object that contains user information.
+ *         schema:
+ *           type: object
+ *           properties:
+ *             email:
+ *               type: string
+ *               example: user@example.com
+ *               description: User's email address.
+ *             first_name:
+ *               type: string
+ *               example: John
+ *               description: User's first name.
+ *             last_name:
+ *               type: string
+ *               example: Doe
+ *               description: User's last name.
+ *             birthDate:
+ *               type: string
+ *               format: date
+ *               example: 1990-01-01
+ *               description: User's date of birth (in YYYY-MM-DD format).
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         schema:
+ *           $ref: '#/definitions/User'  # Reference to a User definition if available
+ *       400:
+ *         description: Invalid input, missing required fields
+ *       500:
+ *         description: Internal server error
+ */
+
+
+router.post('/user/update', (req, res) => {
+    console.log(req.body);
+    var user_hash = req.body.User_hash;
+    var email = req.body.Email;
+    var first_name = req.body.FirstName;
+    var last_name = req.body.LastName;
+    var birthDate = req.body.Birth_date;
+    //req.log('Initalizing user creator!');
+
+    return res.json(user_obj.User_update_data(user_hash=user_hash,email=email,first_name=first_name,
         last_name=last_name,birthDate=birthDate)
     );
 })

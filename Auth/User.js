@@ -1,7 +1,5 @@
 //require('dotenv').config();
 import crypto from 'crypto';
-import DB from '../DBconnect/DB.js'
-import { Collection } from 'mongodb';
 
 
 class User{
@@ -49,8 +47,13 @@ class User{
         }
     }
 
-    User_update_data(username){
-
+    async User_update_data(user_hash,email,first_name,last_name,birthDate){
+        var filter =  {'user_hash': user_hash};
+        var updater = { $set: {name: "New Name"}, $set: {'email':email}, $set: {'first_name':first_name},
+                 $set: {'last_name':last_name}, $set: {'birth_date':birthDate}};
+       
+        var json_to_update = [filter,updater]
+        var user_doc = await this.DB.update_doc(json_to_update,'users');
     }
 
     User_deletion(username){
@@ -64,7 +67,8 @@ class User{
                 var json_data_user = {'hash':user_token}
                 var user_doc = await this.DB.get_doc(json_data_user,'users');
                 console.log(`logging succeded with username ${username}`);
-                return {valid:true,hash:user_token,role:user_doc['role']};
+                console.log(user_doc);
+                return {valid:true,hash:user_token,role:user_doc[0]['role']};
             }
             else{
                 console.log(`logging failed with username ${username}`);

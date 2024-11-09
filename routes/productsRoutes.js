@@ -93,21 +93,18 @@ product_router.post('/product/retrive',async (req, res) => {
 
 product_router.post('/product/buy',async (req, res) => {
     console.log(req.body);
-    var product_id = req.body.Product_id;
-    //var quntity = req.body.Quntity;
-    //var filter = req.body.Filter;
-    //req.log('Initalizing user creator!');
-    var product_buy = await product_obj.Product_buy(product_id=product_id);
+    var user_hash = req.body.User_hash;
+    var product_id_list = user_obj.users_online[user_hash].cart_products; 
+    var product_buy = await product_obj.Product_buy(product_id_list=product_id_list,user_hash=user_hash);
     console.log("-----------------------");
     console.log(product_buy);
     if (product_buy['ans'] === true){
         console.log("Shimi bought the product")
         console.log("-----------------------");
-        return res.status(200).json(product_buy['data']);
-        
+        return res.status(200).json({'message':product_buy['data']['message'],'reception':product_buy['data']['reception']});
     }
     else{
-        return res.status(404).json({"message":product_buy['data'][0]['message']});
+        return res.status(404).json({'message':product_buy['data']['message']});
     }
 })
 

@@ -37,27 +37,36 @@ class Product{
         return product_id;
     }
 
-    async Product_buy(product_id_list){
+    async Product_buy(product_id_list,user_hash){
+        var reception_buy_sum = 0;
+        var reception_item_list = [];
+        var user_json_data = {'id':user_hash};
+        var full_name_retriver = await this.DB.get_doc(user_json_data,'users');
+        var reception_full_name = `${full_name_retriver[0]['first_name']} + ' ' + ${full_name_retriver[0]['last_name']}`;
         for (let product_id of product_id_list) {
             var product_json_data = {'id':product_id};
             try{
                 var data =  await this.DB.get_doc(product_json_data, 'items');
                 if (!data){
-                    return {'ans':false,'data':[{'message':"not such product"}]};
+                    return {'ans':false,'data':{'message':"not such product"}};
                 }
                 if (data[0]['quantity'] < 1){
-                    return {'ans':false,'data':[{'message':"no product left in the warhouse"}]};
+                    return {'ans':false,'data':{'message':"no product left in the warhouse"}};
                 }
-                console.log(data);
                 var filter =  {'id': product_id, 'quantity': { "$gt": 0 }}
                 var updater = { $inc: { 'quantity': -1 }};
                 var json_to_update = [filter,updater]
                 await this.DB.update_doc(json_to_update,"items");
-                return {'ans':true, 'data':data};
+                reception_buy_sum += data[0]['price'];
+                reception_item_list.push(`${data[0]['name']} : ${data[0]['price']}`);
+        var reception = {'full_name':reception_full_name,'sum':reception_buy_sum, 'items':reception_item_list};
+        var db_puarchse = {'user_hash':user_hash,'sum':reception_buy_sum, 'items':reception_item_list};
+        await this.DB.add_doc.add_doc(db_puarchse,'purchase')
+        return {'ans':true, data: {'message':'payment sucsseded enjoy!','reception':reception}};
             }
             catch(error){
                 console.log(error);
-                return {'ans':false};
+                return {'ans':false,'data':{'message':"error occurd "}};
             }
     }
 }

@@ -71,7 +71,6 @@ class DB {
   async get_doc(json_data, collection_name){
     try{
       let documents = await this.database.collection(collection_name).find(json_data, { projection: { _id: 0 } }).toArray();
-      console.log(documents);
       if (!documents) {
         console.log(`the desire doc is not found`);
         return null;
@@ -90,6 +89,17 @@ class DB {
     }
     catch(error){
     console.error('Failed to update document', error);
+    throw error;
+  }
+}
+
+  async remove_doc(json_data,collection_name){
+    try{
+      await this.database.collection(collection_name).deleteOne(...json_data);
+      console.log(`Deleted the doc of payment ${collection_name} with parametrs ${json_data}`);
+    }
+    catch(error){
+    console.error('Failed to delete document', error);
     throw error;
   }
 }
