@@ -37,15 +37,16 @@ class Payment{
         var filter =  {'user_hash': user_hash};
         var updater = {};
         var json_to_update = [filter,updater]
+        var payment_info = this.DB.get_doc(json_to_update, 'payment');
         try{
-            if (this.DB.get_doc(json_to_update, 'payment').length > 0){;
-                return {'vaild': true,'message':'Payment check succeded'};
+            if (payment_info.length > 0){;
+                return {'vaild': true,'data':{'payment_info':payment_info[0] ,'message':'Payment check succeded'}};
         }
-        return {'vaild': false,'message':'Payment check failed'};
+        return {'vaild': false,'data' : {'message':'Payment check failed'}};
             }
         catch(error){
             console.log(error);
-            return {'vaild': false,'message':'Payment check failed'};
+            return {'vaild': false,'data' : {'message':'Payment check failed'}};
         }
     }
 }

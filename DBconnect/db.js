@@ -82,14 +82,29 @@ class DB {
     }
   }
 
+  async get_doc_filter(json_data, collection_name){
+    try{
+      let documents = await this.database.collection(collection_name).find(...json_data, { projection: { _id: 0 } }).toArray();
+      if (!documents) {
+        console.log(`the desire doc is not found`);
+        return null;
+      }
+      return documents;
+    }catch(error){
+      console.error('Failed to find document', error);
+      throw error;
+    }
+  }
+
   async update_doc(json_data,collection_name){
     try{
       await this.database.collection(collection_name).updateOne(...json_data);
       console.log(`Updated the ${collection_name} with parametrs ${json_data}`);
+      return 'succeded to update DB'
     }
     catch(error){
-    console.error('Failed to update document', error);
-    throw error;
+      console.error('Failed to update document', error);
+      return 'failed to update DB';
   }
 }
 

@@ -34,26 +34,45 @@ class User{
         
     }
 
-    User_check_if_exist(username){
+    async User_view(user_hash){
         try{
-            if (this.DB.get_user_doc(username) == null){
-                console.log('i will think about it user not found');
+            var filter =  {'hash': user_hash};
+            var updater = {};
+            var json_to_update = [filter,updater]
+            var user_details = await this.DB.get_doc_filter(json_to_update, 'users');
+            if (user_details.length > 0 ){
+                console.log(`retrive the data for user: ${user_details[0]['username']}`);
+                return ({'valid':true, 'data':{'user_data':user_details[0],'message':'succesful retrival for user info'}});
             }
-            
+            return ({'valid':false, 'data':{'message':'failed to retrieve the user info'}});
         }
         catch(error){
             console.error('Failed to find user hash', error);
+            return ({'valid':false, 'data':{'message':'some error occurd!'}});
             throw error;
         }
     }
 
-    async User_update_data(user_hash,email,first_name,last_name,birthDate){
-        var filter =  {'user_hash': user_hash};
-        var updater = { $set: {name: "New Name"}, $set: {'email':email}, $set: {'first_name':first_name},
-                 $set: {'last_name':last_name}, $set: {'birth_date':birthDate}};
-       
-        var json_to_update = [filter,updater]
-        var user_doc = await this.DB.update_doc(json_to_update,'users');
+    async User_update_data(user_hash,email,first_name,last_name,birthDate,role){
+        try{
+            var filter =  {'hash': user_hash};
+            var updater = {
+                $set: {
+                    'email': email,
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'birth_date': birthDate,
+                    'role': role
+                }
+            };
+            
+            var json_to_update = [filter,updater];
+            var user_doc = await this.DB.update_doc(json_to_update,'users');
+            return {'valid': true, 'message':user_doc};
+        }
+        catch(error){
+            return {'valid': false, 'message':'failed to update DB'};
+        }
     }
 
     User_deletion(username){

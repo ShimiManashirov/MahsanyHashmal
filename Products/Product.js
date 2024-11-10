@@ -97,11 +97,11 @@ class Product{
             var json_to_update = [filter,updater]
             await this.DB.update_doc(json_to_update,"items");
             var data =  await this.DB.get_doc(product_json_data, 'items');
-            return {'ans':true, 'data':data};
+            return {'valid':true, 'data':data[0]};
         }
         catch(error){
             console.log(error);
-            return {'ans':false};
+            return {'valid':false};
         }
 
     }
@@ -119,12 +119,12 @@ class Product{
         try{
             await this.DB.add_doc(product_json_data,"items");
             
-            var data =  {'data':await this.DB.get_doc(product_json_data, 'items'),'message':'added product to warehouse'};
-            return {'ans':true, 'data':data};
+            var data =  {'product':await this.DB.get_doc(product_json_data, 'items'),'message':'added product to warehouse'};
+            return {'valid':true, 'data':data};
         }
         catch(error){
             console.log(error);
-            return {'ans':false};
+            return {'valid':false,'message':'failed to add product'};
         }
 
     }

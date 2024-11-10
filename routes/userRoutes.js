@@ -121,7 +121,7 @@ router.post('/user/create', (req, res) => {
     //req.log('Initalizing user creator!');
     console.log(req.body.username);
 
-    return res.json(user_obj.User_creator(username=username,password=password,email=email,first_name=first_name,
+    return res.status(200).json(user_obj.User_creator(username=username,password=password,email=email,first_name=first_name,
         last_name=last_name,birthDate=birthDate)
     );
 })
@@ -175,18 +175,68 @@ router.post('/user/create', (req, res) => {
  */
 
 
-router.post('/user/update', (req, res) => {
+router.post('/user/update',async (req, res) => {
     console.log(req.body);
     var user_hash = req.body.User_hash;
     var email = req.body.Email;
-    var first_name = req.body.FirstName;
-    var last_name = req.body.LastName;
+    var first_name = req.body.First_name;
+    var last_name = req.body.Last_name;
     var birthDate = req.body.Birth_date;
-    //req.log('Initalizing user creator!');
+    var role = req.body.Role;
 
-    return res.json(user_obj.User_update_data(user_hash=user_hash,email=email,first_name=first_name,
-        last_name=last_name,birthDate=birthDate)
+    var updater = await user_obj.User_update_data(user_hash=user_hash,email=email,first_name=first_name,
+        last_name=last_name,birthDate=birthDate,role=role);
+    console.log(updater);
+    if (updater['valid']){
+        return res.status(200).json({'message':updater['message']});
+    }
+    return res.status(500).json({'message':updater['message']});
+}
     );
-})
+
+
+
+/**
+ * @swagger
+ * /user/view:
+ *   post:
+ *     summary: Create a new user
+ *     description: This endpoint allows you to create a new user by providing the necessary information.
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - name: user
+ *         in: body
+ *         required: true
+ *         description: User object that contains user information.
+ *         schema:
+ *           type: object
+ *           properties:
+ *             User_hash:
+ *               type: string
+ *               
+ *     responses:
+ *       200:
+ *         description: User view successfully
+ *         schema:
+ *           $ref: '#/definitions/User'  # Reference to a User definition if available
+ *       400:
+ *         description: Invalid input, missing required fields
+ *       500:
+ *         description: Internal server error
+ */
+
+
+router.post('/user/view', async (req, res) => {
+    console.log(req.body);
+    var user_hash = req.body.User_hash;
+    //req.log('Initalizing user creator!');
+    var user_data = await user_obj.User_view(user_hash=user_hash);
+    if (user_data['valid']){
+        return res.status(200).json({'data':user_data['data']});
+    }
+    return res.status(404).json({'data':user_data['data']});
+}
+    );
 
 export default router;
