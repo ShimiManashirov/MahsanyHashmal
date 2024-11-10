@@ -44,7 +44,7 @@ class Cart{
             var json_to_update = [filter,updater]
             await this.DB.update_doc(json_to_update,"items");
             this.cart_products.pop(product_id);
-            return {'valid':true, 'data':data};
+            return {'valid':true, 'data':{'message':'Removed product from cart'}};
         }
         catch(error){
             console.log(error);

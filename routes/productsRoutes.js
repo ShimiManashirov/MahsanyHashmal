@@ -1,5 +1,6 @@
 import express from 'express';
 import { product_obj } from '../main.js';
+import { user_obj } from '../main.js';
 
 
 const product_router = express.Router();
@@ -92,19 +93,30 @@ product_router.post('/product/retrive',async (req, res) => {
  */
 
 product_router.post('/product/buy',async (req, res) => {
-    console.log(req.body);
-    var user_hash = req.body.User_hash;
-    var product_id_list = user_obj.users_online[user_hash].cart_products; 
-    var product_buy = await product_obj.Product_buy(product_id_list=product_id_list,user_hash=user_hash);
-    console.log("-----------------------");
-    console.log(product_buy);
-    if (product_buy['ans'] === true){
-        console.log("Shimi bought the product")
+    try{
+        console.log(req.body);
+        var user_hash = req.body.User_hash;
+        console.log(user_obj.users_online[user_hash].cart_products);
+        var product_id_list = user_obj.users_online[user_hash].cart_products; 
+        var product_buy = await product_obj.Product_buy(product_id_list=product_id_list,user_hash=user_hash);
         console.log("-----------------------");
-        return res.status(200).json({'message':product_buy['data']['message'],'reception':product_buy['data']['reception']});
+        console.log(product_buy);
+        if (product_buy['ans'] === true){
+            console.log("Shimi bought the product")
+            console.log("-----------------------");
+            return res.status(200).json({
+                'message': product_buy['data']['message'],
+                'reception': product_buy['data']['reception']
+            });
+        
+        }
+        else{
+            return res.status(404).json({'message':product_buy['data']['message']});
+        }
     }
-    else{
-        return res.status(404).json({'message':product_buy['data']['message']});
+    catch(error){
+        return res.status(500).json({'message':'error occured check auth'});
+
     }
 })
 

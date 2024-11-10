@@ -40,9 +40,10 @@ class Product{
     async Product_buy(product_id_list,user_hash){
         var reception_buy_sum = 0;
         var reception_item_list = [];
-        var user_json_data = {'id':user_hash};
+        var user_json_data = {'hash':user_hash};
         var full_name_retriver = await this.DB.get_doc(user_json_data,'users');
-        var reception_full_name = `${full_name_retriver[0]['first_name']} + ' ' + ${full_name_retriver[0]['last_name']}`;
+        console.log(full_name_retriver);
+        var reception_full_name = `${full_name_retriver[0]['first_name']} ${full_name_retriver[0]['last_name']}`;
         for (let product_id of product_id_list) {
             var product_json_data = {'id':product_id};
             try{
@@ -61,8 +62,8 @@ class Product{
                 reception_item_list.push(`${data[0]['name']} : ${data[0]['price']}`);
         var reception = {'full_name':reception_full_name,'sum':reception_buy_sum, 'items':reception_item_list};
         var db_puarchse = {'user_hash':user_hash,'sum':reception_buy_sum, 'items':reception_item_list};
-        await this.DB.add_doc.add_doc(db_puarchse,'purchase')
-        return {'ans':true, data: {'message':'payment sucsseded enjoy!','reception':reception}};
+        await this.DB.add_doc(db_puarchse,'purchase')
+        return {'ans':true, data: {'message':'payment succeded enjoy!','reception':reception}};
             }
             catch(error){
                 console.log(error);
