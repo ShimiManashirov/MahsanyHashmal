@@ -122,7 +122,7 @@ router.post('/user/create', (req, res) => {
     console.log(req.body.username);
 
     return res.status(200).json(user_obj.User_creator(username=username,password=password,email=email,first_name=first_name,
-        last_name=last_name,birthDate=birthDate)
+        last_name=last_name,birthDate=birthDate,role='costumer')
     );
 })
 

@@ -18,10 +18,10 @@ class User{
         return user_token;
     }
 
-    User_creator(username,password,email,first_name,last_name,birthDate){
+    User_creator(username,password,email,first_name,last_name,birthDate,role){
         var user_token = this.encrtyptor(username,password);
         var user_json_data = {'username':username,'hash':user_token,'email':email,'first_name':first_name,
-            'last_name':last_name,'birth_date':birthDate};
+            'last_name':last_name,'birth_date':birthDate,'role':role};
         console.log(user_json_data);
         try{
             this.DB.add_doc(user_json_data, 'users');

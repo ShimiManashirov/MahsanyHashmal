@@ -27,6 +27,26 @@ class Product{
         }
     }
 
+    async Product_remover(id) {
+        var filter = { 'id': id };
+        var updater = {};
+        var json_to_remove = [filter,updater];        
+        try {
+            var data = await this.DB.remove_doc(json_to_remove, 'items');
+    
+            if (data['valid']) {
+                return { 'valid': true, 'message': data['message'] };
+            } else {
+                return { 'valid': false, 'message': data['message'] };
+            }
+        } catch (error) {
+            console.log(error);
+            return { 'valid': false, 'message': 'Failed to remove' }; 
+        }
+    }
+    
+    
+
     async Product_encrtyptor(categorie,name,vendor){
         var hash = crypto.createHash(this.encryption_method);
         var data_to_generate = `${categorie}+${name}+${vendor}`;
@@ -96,12 +116,12 @@ class Product{
             var updater = { $inc: { 'quantity': quantity_adder }};
             var json_to_update = [filter,updater]
             await this.DB.update_doc(json_to_update,"items");
-            var data =  await this.DB.get_doc(product_json_data, 'items');
-            return {'valid':true, 'data':data[0]};
+            var data =  await this.DB.get_doc(filter, 'items');
+            return {'valid':true, 'data':{'product':data[0],'message':'success'}};
         }
         catch(error){
             console.log(error);
-            return {'valid':false};
+            return {'valid':false,'data':{'message':'fail to add exist product'}};
         }
 
     }
@@ -115,10 +135,10 @@ class Product{
             'vendor':vendor,
             'id':product_encryprot,
             'img_url':img_url,
+            'available_quantity':quantity
             };
         try{
             await this.DB.add_doc(product_json_data,"items");
-            
             var data =  {'product':await this.DB.get_doc(product_json_data, 'items'),'message':'added product to warehouse'};
             return {'valid':true, 'data':data};
         }

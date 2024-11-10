@@ -111,13 +111,28 @@ class DB {
   async remove_doc(json_data,collection_name){
     try{
       await this.database.collection(collection_name).deleteOne(...json_data);
-      console.log(`Deleted the doc of payment ${collection_name} with parametrs ${json_data}`);
+      console.log(`Deleted the doc of  ${collection_name} with parametrs ${json_data}`);
+      return {'valid':true,'message':'Succeded to remove!'}
     }
     catch(error){
     console.error('Failed to delete document', error);
+    return {'valid':false,'message':'Failed to remove!'}
     throw error;
   }
 }
+
+  async aggregate_data(json_data,collection_name){
+    try{
+      console.log('Aggregating Data');
+      console.log(json_data);
+      let data = await this.database.collection(collection_name).aggregate(json_data).toArray();;
+      console.log(data);
+      return data;
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
   
   close() {
     this.client.close();

@@ -6,6 +6,7 @@ import router from './routes/userRoutes.js';
 import product_router from './routes/productsRoutes.js'
 import cart_router from './routes/cartRoutes.js';
 import twitter_router from './routes/twitterRoutes.js'
+import static_router from './routes/staticsRouters.js';
 import bodyParser from 'body-parser';
 import cors from 'cors'
 
@@ -49,7 +50,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/', router);
 app.use('/', product_router);
 app.use('/',cart_router);
-app.use('/',twitter_router) ;
+app.use('/',twitter_router);
+app.use('/',static_router);
 
 // Setup function
 async function setup() {
