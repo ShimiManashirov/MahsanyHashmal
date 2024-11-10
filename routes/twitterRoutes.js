@@ -8,10 +8,7 @@ const upload = multer({ dest: 'uploads/' });
 const twitter_router = express.Router();
 
 const twitterClient = new TwitterApi({
-    consumer_key: 'xMZbvCmva1qU3jwgN6j6ZO9Fi',
-    consumer_secret: 'KFtr8bJTLU80hEo1ANz48wbUUofppwOtMgcj8J4nkhK0PRUM8V',
-    access_token: '1855213590870937600-Ns7dprOnKYYHqIqU3wPgijtD5yc2A8',
-    access_token_secret: 'bSfNG8oB12qpJKqvZzzyArb8KiJArVNdCee91cDXDMoFC',
+    bearer_token: 'AAAAAAAAAAAAAAAAAAAAALF9wwEAAAAAAROokkcg%2FWFjokoQy5V2W7l2RIQ%3D4ca88atgRM97zOYKSMKs12tPnPEhL5aEzoOPAGPN79EPF2GrwO'
 });
 
 /**

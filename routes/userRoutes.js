@@ -110,7 +110,7 @@ router.post('/user/login', async (req, res) => {
  */
 
 
-router.post('/user/create', (req, res) => {
+router.post('/user/create', async (req, res) => {
     console.log(req.body);
     var username = req.body.Username;
     var password = req.body.Password;
@@ -119,11 +119,19 @@ router.post('/user/create', (req, res) => {
     var last_name = req.body.lastName;
     var birthDate = req.body.birthDate;
     //req.log('Initalizing user creator!');
-    console.log(req.body.username);
-
-    return res.status(200).json(user_obj.User_creator(username=username,password=password,email=email,first_name=first_name,
-        last_name=last_name,birthDate=birthDate,role='costumer')
-    );
+    await user_obj.User_creator(username,password,email,first_name,
+        last_name,birthDate,'costumer');
+    var user_auth =await user_obj.User_check_auth(username=username,password=password)
+    if (user_auth['valid']){
+        console.log("got here")
+        var user_cart = new Cart(configuration.config_product,user_auth['hash'],user_obj.DB);
+        user_obj.users_online[user_auth['hash']] = user_cart;
+        console.log(user_auth);
+        return res.status(200).json({ Username: username,User_hash:user_auth['hash'],User_role:user_auth['role']});
+    }
+    else{
+        return res.status(403).json({ Username: username });
+    }
 })
 
 
